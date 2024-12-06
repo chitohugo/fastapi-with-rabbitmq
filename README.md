@@ -33,4 +33,11 @@ POSTGRES_PORT=5432
 POSTGRES_DB=character
 POSTGRES_HOST=db
 PGTZ=America/Argentina/Buenos_Aires
+
+# RABBITMQ
+RABBITMQ_DEFAULT_USER="admin"
+RABBITMQ_DEFAULT_PASS="admin"
+EXCHANGE="characters"
+ROUTING_KEY="characters"
+CHARACTERS_QUEUE="characters_queue"
 ```
