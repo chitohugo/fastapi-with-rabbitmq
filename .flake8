@@ -1,0 +1,5 @@
+[flake8]
+import-order-style = appnexus
+exclude = tests, migrations
+ignore = D100, D104, D107, W503, W504
+max-line-length = 99

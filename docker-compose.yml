@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:11.4
+    container_name: db-character
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - psql:/var/lib/postgresql/data/
+    environment:
+      - PGTZ=America/Argentina/Buenos_Aires
+    networks:
+      - characters
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .env
+    networks:
+      - characters
+
+  character:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: api-character
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    networks:
+      - characters
+    depends_on:
+      - db
+      - rabbitmq
+
+networks:
+  characters:
+    name: characters
+    external: true
+
+volumes:
+  psql:
+    driver: local
