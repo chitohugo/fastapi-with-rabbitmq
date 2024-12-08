@@ -2,26 +2,27 @@ import json
 
 from aio_pika.abc import AbstractIncomingMessage
 
-from use_cases.utils.upload_file import FileProcessor
 from logger_config import logger
+from utils.email_notification.send_email import EmailNotification
 
 
 class ProcessMessage:
-    def __init__(self, upload_file: FileProcessor):
-        self.upload_file = upload_file
-
+    def __init__(self, email_service: EmailNotification):
+        self.service = email_service
 
     async def process_message(self, message: AbstractIncomingMessage):
-        logger.info(f"Received: {message.body}")
-        message = message.body.decode("utf-8")
-        payload = json.loads(message)
+        logger.info(f"Received message: {message.body}")
+        try:
+            payload = json.loads(message.body.decode("utf-8"))
+            logger.info(f"Processing message: {payload}")
+            data = {
+                "recipient": payload["email"],
+                "subject": "Character created",
+                "message": f"Character {payload['name']} has been created"
+            }
+            await self.service.send_notification(**data)
+            await message.ack()
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            await message.nack(requeue=False)
 
-        if payload["type"] == "upload_file":
-            await self.upload_file.get_data(payload)
-
-        if payload["type"] == "uploaded_file":
-            logger.info(f"File uploaded: {payload}")
-
-
-    async def process_file(self, payload: dict):
-        await self.upload_file.get_data(payload)

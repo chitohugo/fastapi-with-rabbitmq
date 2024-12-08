@@ -37,6 +37,11 @@ class BaseConfig:
     rabbit_url: str = f"amqp://{rabbit_user}:{rabbit_pass}@{rabbit_host}:5672"
     characters_queue: str = os.getenv("CHARACTERS_QUEUE")
     exchange: str = os.getenv("EXCHANGE")
+    routing_key: str = os.getenv("ROUTING_KEY")
+    smtp_server: str = os.getenv("SMTP_SERVER")
+    smtp_port: str = os.getenv("SMTP_PORT")
+    smtp_username: str = os.getenv("SMTP_USERNAME")
+    smtp_password: str = os.getenv("SMTP_PASSWORD")
 
 
 class TestConfig(BaseConfig):

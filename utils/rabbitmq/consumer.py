@@ -5,22 +5,23 @@ from utils.rabbitmq.process_message import ProcessMessage
 
 
 class RabbitMQConsumer:
-    def __init__(self, rabbitmq_manager: RabbitMQManager, callback: ProcessMessage):
-        self.rabbitmq_manager = rabbitmq_manager
+    def __init__(self, manager: RabbitMQManager, callback: ProcessMessage):
+        self.rabbitmq = manager
         self.process = callback
 
     async def consume_messages(self, queue_name):
         logger.info(f"Consuming on queue: {queue_name}")
         try:
-            logger.info(f"Starting consuming on queue: {queue_name}")
-            await self.rabbitmq_manager.declare_exchange(exchange_name=settings.exchange)
-            await self.rabbitmq_manager.declare_queue(queue_name)
-            await self.rabbitmq_manager.bind_queue_to_exchange(routing_key=queue_name)
-            await self.rabbitmq_manager.consume_queue(
-                self.process.process_message
-            )
-            logger.info(" [*] Waiting for messages. To exit press CTRL+C")
+            if not self.rabbitmq.connection or self.rabbitmq.connection.is_closed:
+                await self.rabbitmq.connect()
+
+            await self.rabbitmq.declare_exchange(exchange_name=settings.exchange)
+            await self.rabbitmq.declare_queue(queue_name)
+            await self.rabbitmq.bind_queue_to_exchange(routing_key=settings.routing_key)
+            await self.rabbitmq.consume_queue(callback=self.process.process_message, no_ack=False)
+            logger.info("Waiting for messages...")
+
 
         except Exception as e:
-            logger.error(e)
+            logger.error(f"Error in consumer: {e}")
             raise

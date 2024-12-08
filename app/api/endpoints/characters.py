@@ -47,12 +47,19 @@ async def create_character(
         current_user: User = Depends(get_current_user)
 ):
     payload.user_id = current_user.id
+
     character = service.add(payload)
+
+    message = payload.model_dump()
+    message["email"] = current_user.email
+
     background_tasks.add_task(
         rabbitmq.publish,
-        routing_key="character_created",
-        message=payload.model_dump()
+        routing_key="characters",
+        message=message
     )
+    # await rabbitmq.publish(routing_key="characters",
+    #     message=payload.model_dump())
     return character
 
 
