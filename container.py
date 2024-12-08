@@ -8,7 +8,11 @@ from core.services.character_service import CharacterService
 from core.services.rabbitmq_service import RabbitMQService
 from core.services.user_service import UserService
 from db.database import Database
+from utils.email_notification.send_email import EmailNotification
+from utils.email_notification.smtp_service import SMTPService
+from utils.rabbitmq.consumer import RabbitMQConsumer
 from utils.rabbitmq.manager import RabbitMQManager
+from utils.rabbitmq.process_message import ProcessMessage
 from utils.rabbitmq.producer import RabbitMQProducer
 
 
@@ -35,4 +39,23 @@ class Container(containers.DeclarativeContainer):
     user_service = providers.Factory(UserService, user_repository=user_repository)
     character_service = providers.Factory(CharacterService, character_repository=character_repository)
     rabbitmq_service = providers.Factory(RabbitMQService, producer=rabbitmq_producer)
+
+    # SMTP service configured
+    smtp_service = providers.Factory(
+        SMTPService,
+        smtp_server=settings.smtp_server,
+        smtp_port=settings.smtp_port,
+        smtp_username=settings.smtp_username,
+        smtp_password=settings.smtp_password,
+    )
+
+    # Email notification service that uses the SMTP service
+    email_service = providers.Factory(
+        EmailNotification,
+        smtp_service=smtp_service,
+    )
+    messages = providers.Factory(ProcessMessage, email_service=email_service)
+    rabbitmq_consumer = providers.Factory(
+        RabbitMQConsumer, manager=rabbitmq, callback=messages
+    )
 
