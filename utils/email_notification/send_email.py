@@ -1,6 +1,6 @@
-import smtplib
 from email.message import EmailMessage
 
+from logger_config import logger
 from utils.email_notification.abstract_notification import NotificationServiceAbstract
 from utils.email_notification.smtp_service import SMTPService
 
@@ -11,18 +11,20 @@ class EmailNotification(NotificationServiceAbstract):
 
     async def send_notification(
         self,
-        recipient: str,
-        subject: str,
-        message: str
+        **kwargs,
     ) -> None:
+        recipient = kwargs.pop("recipient")
+        subject = kwargs.pop("subject")
+        logger.info(f"Sending email to: {recipient}")
+        logger.info(f"Subject: {subject}")
         if not self._validate_email(recipient):
             raise ValueError("The email recipient is invalid.")
 
+        logger.info(f"Sending email to: {kwargs}")
         email = EmailMessage()
         email["From"] = self.smtp_service.username
         email["To"] = recipient
         email["Subject"] = subject
-        email.set_content(message)
 
         self.smtp_service.send_email(email)
 

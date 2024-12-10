@@ -21,7 +21,7 @@ class AppFactory:
         self.backend_cors_origins = backend_cors_origins
 
     async def connect_to_rabbitmq(self, retries=5, delay=3):
-        """Conectar a RabbitMQ con reintentos."""
+        """Connect to RabbitMQ with retries."""
         for attempt in range(retries):
             try:
                 logger.info("Attempting to connect to RabbitMQ...")
@@ -36,7 +36,7 @@ class AppFactory:
                     return False
 
     async def start_consumers(self):
-        """Iniciar consumidores de RabbitMQ."""
+        """Start RabbitMQ consumers."""
         if await self.connect_to_rabbitmq():
             try:
                 consumer = self.container.rabbitmq_consumer()
@@ -47,7 +47,7 @@ class AppFactory:
 
     @asynccontextmanager
     async def lifespan(self, app: FastAPI):
-        """Lógica de inicialización y cierre de la aplicación."""
+        """Application initialization and shutdown logic."""
         try:
             logger.info("Application startup...")
             await self.start_consumers()
@@ -61,7 +61,7 @@ class AppFactory:
                 logger.error(f"Error closing RabbitMQ connection: {e}")
 
     def create_app(self):
-        """Crear la instancia de FastAPI."""
+        """Create the FastAPI instance."""
         app = FastAPI(
             title=self.project_name,
             openapi_url=f"{self.api_prefix}/openapi.json",
@@ -98,8 +98,6 @@ class AppFactory:
 
         return app
 
-
-# Crear la instancia de la aplicación
 app_factory = AppFactory(
     settings.project_name, settings.prefix, settings.backend_cors_origins
 )

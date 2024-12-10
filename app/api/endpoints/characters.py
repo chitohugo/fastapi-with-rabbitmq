@@ -51,15 +51,14 @@ async def create_character(
     character = service.add(payload)
 
     message = payload.model_dump()
-    message["email"] = current_user.email
+    message["recipient"] = current_user.email
+    message["subject"] = "New character created"
 
     background_tasks.add_task(
         rabbitmq.publish,
         routing_key="characters",
         message=message
     )
-    # await rabbitmq.publish(routing_key="characters",
-    #     message=payload.model_dump())
     return character
 
 

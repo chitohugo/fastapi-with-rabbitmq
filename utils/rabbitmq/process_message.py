@@ -15,12 +15,7 @@ class ProcessMessage:
         try:
             payload = json.loads(message.body.decode("utf-8"))
             logger.info(f"Processing message: {payload}")
-            data = {
-                "recipient": payload["email"],
-                "subject": "Character created",
-                "message": f"Character {payload['name']} has been created"
-            }
-            await self.service.send_notification(**data)
+            await self.service.send_notification(**payload)
             await message.ack()
         except Exception as e:
             logger.error(f"Error processing message: {e}")
