@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .character-info {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .character-info dt {
+            font-weight: bold;
+            color: #555;
+        }
+        .character-info dd {
+            margin: 0 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ subject }}</h1>
+        </div>
+        <p>Hola, {{ full_name }}:</p>
+        <p>Has creado un nuevo personaje llamado <b>{{ name }}</b>. Aquí tienes los detalles:</p>
+        <dl class="character-info">
+            <dt>Altura:</dt>
+            <dd>{{ height }} cm</dd>
+            <dt>Peso:</dt>
+            <dd>{{ mass }} kg</dd>
+            <dt>Color de cabello:</dt>
+            <dd>{{ hair_color }}</dd>
+            <dt>Color de piel:</dt>
+            <dd>{{ skin_color }}</dd>
+            <dt>Color de ojos:</dt>
+            <dd>{{ eye_color }}</dd>
+        </dl>
+        <p>¡Esperamos que disfrutes interactuando con tu personaje!</p>
+    </div>
+</body>
+</html>

@@ -42,6 +42,7 @@ class BaseConfig:
     smtp_port: str = os.getenv("SMTP_PORT")
     smtp_username: str = os.getenv("SMTP_USERNAME")
     smtp_password: str = os.getenv("SMTP_PASSWORD")
+    template_dir: str = os.getenv("TEMPLATE_DIR")
 
 
 class TestConfig(BaseConfig):
