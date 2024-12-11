@@ -40,4 +40,12 @@ RABBITMQ_DEFAULT_PASS="admin"
 EXCHANGE="characters"
 ROUTING_KEY="characters"
 CHARACTERS_QUEUE="characters_queue"
+# GMAIL
+SMTP_SERVER="smtp.gmail.com"
+SMTP_PORT=587
+SMTP_USERNAME="username"
+SMTP_PASSWORD="password"
+
+# STATICS FILES
+TEMPLATE_DIR="utils/statics/templates"
 ```
