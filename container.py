@@ -53,6 +53,7 @@ class Container(containers.DeclarativeContainer):
     email_service = providers.Factory(
         EmailNotification,
         smtp_service=smtp_service,
+        template_dir=settings.template_dir
     )
     messages = providers.Factory(ProcessMessage, email_service=email_service)
     rabbitmq_consumer = providers.Factory(
