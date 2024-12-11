@@ -1,4 +1,5 @@
 from dependency_injector import containers, providers
+from jinja2 import Environment, FileSystemLoader
 
 from config import settings
 from core.repository.character_repository import CharacterRepository
@@ -48,12 +49,16 @@ class Container(containers.DeclarativeContainer):
         smtp_username=settings.smtp_username,
         smtp_password=settings.smtp_password,
     )
-
+    # Jinja2 environment configuration
+    jinja2_service = providers.Singleton(
+        Environment,
+        loader=FileSystemLoader(settings.template_dir)
+    )
     # Email notification service that uses the SMTP service
     email_service = providers.Factory(
         EmailNotification,
         smtp_service=smtp_service,
-        template_dir=settings.template_dir
+        template_env=jinja2_service
     )
     messages = providers.Factory(ProcessMessage, email_service=email_service)
     rabbitmq_consumer = providers.Factory(
