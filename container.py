@@ -10,6 +10,7 @@ from core.services.rabbitmq_service import RabbitMQService
 from core.services.user_service import UserService
 from db.database import Database
 from utils.email_notification.send_email import EmailNotification
+from utils.email_notification.sendgrid import SendGridEmailService
 from utils.email_notification.smtp_service import SMTPService
 from utils.rabbitmq.consumer import RabbitMQConsumer
 from utils.rabbitmq.manager import RabbitMQManager
@@ -49,6 +50,12 @@ class Container(containers.DeclarativeContainer):
         smtp_username=settings.smtp_username,
         smtp_password=settings.smtp_password,
     )
+    # Sendgrid service configured
+    sendgrid_service = providers.Singleton(
+        SendGridEmailService,
+        api_key=settings.sendgrid_api_key,
+        sender=settings.sendgrid_default_sender
+    )
     # Jinja2 environment configuration
     jinja2_service = providers.Singleton(
         Environment,
@@ -57,7 +64,7 @@ class Container(containers.DeclarativeContainer):
     # Email notification service that uses the SMTP service
     email_service = providers.Factory(
         EmailNotification,
-        smtp_service=smtp_service,
+        service=sendgrid_service,
         template_env=jinja2_service
     )
     messages = providers.Factory(ProcessMessage, email_service=email_service)

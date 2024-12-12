@@ -43,6 +43,8 @@ class BaseConfig:
     smtp_username: str = os.getenv("SMTP_USERNAME")
     smtp_password: str = os.getenv("SMTP_PASSWORD")
     template_dir: str = os.getenv("TEMPLATE_DIR")
+    sendgrid_api_key: str = os.getenv("SENDGRID_API_KEY")
+    sendgrid_default_sender: str = os.getenv("SENDGRID_DEFAULT_SENDER")
 
 
 class TestConfig(BaseConfig):

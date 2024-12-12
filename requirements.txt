@@ -16,3 +16,4 @@ python-dotenv==1.0.0
 python-jose==3.3.0
 SQLAlchemy==2.0.25
 uvicorn==0.23.2
+sendgrid==6.11.0
