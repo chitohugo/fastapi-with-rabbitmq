@@ -15,7 +15,7 @@ class ProcessMessage:
         try:
             payload = json.loads(message.body.decode("utf-8"))
             logger.info(f"Processing message: {payload}")
-            await self.service.send_notification(**payload)
+            self.service.send_notification(**payload)
             await message.ack()
         except Exception as e:
             logger.error(f"Error processing message: {e}")
