@@ -12,20 +12,20 @@ class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.repository = user_repository
 
-    def get_list(self):
-        return self.repository.read()
+    async def get_list(self):
+        return await self.repository.read()
 
-    def add(self, schema):
-        return self.repository.create(schema)
+    async def add(self, schema):
+        return await self.repository.create(schema)
 
-    def patch(self, id: int, schema):
-        return self.repository.update(id, schema)
+    async def patch(self, id: int, schema):
+        return await self.repository.update(id, schema)
 
-    def remove_by_id(self, id):
-        return self.repository.delete_by_id(id)
+    async def remove_by_id(self, id):
+        return await self.repository.delete_by_id(id)
 
-    def sign_in(self, sign_in: SignIn):
-        user: User = self.repository.read_by_field("email", sign_in.email)
+    async def sign_in(self, sign_in: SignIn):
+        user: User = await self.repository.read_by_field("email", sign_in.email)
         if not user:
             raise AuthError(message="Incorrect email or password")
 
@@ -44,9 +44,9 @@ class AuthService:
         }
         return response
 
-    def sign_up(self, user: SignUp):
+    async def sign_up(self, user: SignUp):
         # user = User(**sign_up.dict(exclude_none=True))
         user.password = get_password_hash(user.password)
-        created = self.repository.create(user)
+        created = await self.repository.create(user)
         return created
 

@@ -23,7 +23,7 @@ router = APIRouter(
 async def get_users(
         service: UserService = Depends(Provide[Container.user_service])
 ):
-    users = service.get_list()
+    users = await service.get_list()
     return users
 
 
@@ -33,7 +33,7 @@ async def get_user(
         id: int,
         service: UserService = Depends(Provide[Container.user_service]),
 ):
-    return service.get_by_id(id)
+    return await service.get_by_id(id)
 
 
 @router.patch("/{id}", response_model=User, dependencies=[Depends(get_current_user)])
@@ -43,7 +43,7 @@ async def update_user(
         user: UpdateCharacter,
         service: UserService = Depends(Provide[Container.user_service])
 ):
-    return service.patch(id, user)
+    return await service.patch(id, user)
 
 
 @router.delete("/{id}", response_model=Blank, dependencies=[Depends(get_current_user)])
@@ -52,4 +52,4 @@ async def delete_user(
         id: int,
         service: UserService = Depends(Provide[Container.user_service])
 ):
-    return service.remove_by_id(id)
+    return await service.remove_by_id(id)

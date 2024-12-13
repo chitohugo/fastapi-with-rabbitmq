@@ -5,7 +5,6 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
-
 from app.api.routes import routers as v1_routers
 from config import settings
 from containers import Container

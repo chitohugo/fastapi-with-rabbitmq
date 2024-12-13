@@ -24,7 +24,7 @@ router = APIRouter(
 async def get_characters(
         service: CharacterService = Depends(Provide[Container.character_service])
 ):
-    characters = service.get_list()
+    characters = await service.get_list()
     return characters
 
 
@@ -34,7 +34,7 @@ async def get_character(
         id: int,
         service: CharacterService = Depends(Provide[Container.character_service])
 ):
-    return service.get_by_field("id", id)
+    return await service.get_by_field("id", id)
 
 
 @router.post("", response_model=Character)
@@ -47,20 +47,9 @@ async def create_character(
         current_user: User = Depends(get_current_user)
 ):
     payload.user_id = current_user.id
-
-    character = service.add(payload)
-
-    message = payload.model_dump()
-    message["full_name"] = f"{current_user.first_name} {current_user.last_name}"
-    message["recipient"] = current_user.email
-    message["subject"] = "New character created"
-    message["template_name"] = "new_character.html"
-
-    background_tasks.add_task(
-        rabbitmq.publish,
-        routing_key="characters",
-        message=message
-    )
+    character = await service.add(payload)
+    message = build_message(payload, current_user)
+    background_tasks.add_task(rabbitmq.publish, routing_key="characters", message=message)
     return character
 
 
@@ -71,7 +60,7 @@ async def update_character(
         payload: UpdateCharacter,
         service: CharacterService = Depends(Provide[Container.character_service])
 ):
-    return service.patch(id, payload)
+    return await service.patch(id, payload)
 
 
 @router.delete("/{id}", response_model=Blank, dependencies=[Depends(get_current_user)])
@@ -80,4 +69,14 @@ async def delete_character(
         id: int,
         service: CharacterService = Depends(Provide[Container.character_service])
 ):
-    return service.remove_by_id(id)
+    return await service.remove_by_id(id)
+
+
+def build_message(payload: PostCharacter, current_user: User) -> dict:
+    return {
+        "full_name": f"{current_user.first_name} {current_user.last_name}",
+        "recipient": current_user.email,
+        "subject": "New character created",
+        "template_name": "new_character.html",
+        **payload.model_dump()
+    }

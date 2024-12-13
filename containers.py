@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 from jinja2 import Environment, FileSystemLoader
 
-from config import AppConfig, settings
+from config import AppConfig
 from core.repository.character_repository import CharacterRepository
 from core.repository.user_repository import UserRepository
 from core.services.auth_service import AuthService

@@ -12,7 +12,7 @@ from pydantic import ValidationError
 
 
 @inject
-def get_current_user(
+async def get_current_user(
         token: str = Depends(JWTBearer()),
         service: UserService = Depends(Provide[Container.user_service]),
 ) -> User:
@@ -22,7 +22,7 @@ def get_current_user(
     except (jwt.JWTError, ValidationError):
         raise AuthError(message="Could not validate credentials")
 
-    current_user = service.get_by_field("id", token_data.id)
+    current_user = await service.get_by_field("id", token_data.id)
     if not current_user:
         raise AuthError(message="Lead not found")
 
