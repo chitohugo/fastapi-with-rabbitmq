@@ -5,7 +5,7 @@ from core.models.user import User
 from dependency_injector.wiring import inject, Provide
 from fastapi import Depends
 from config import settings
-from container import Container
+from containers import Container
 from core.schema.auth_schema import Payload
 from jose import jwt
 from pydantic import ValidationError

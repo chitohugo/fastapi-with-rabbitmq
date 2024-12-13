@@ -8,7 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.api.routes import routers as v1_routers
 from config import settings
-from container import Container
+from containers import Container
 from core.exceptions import BaseError
 from logger_config import logger
 

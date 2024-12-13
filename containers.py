@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 from jinja2 import Environment, FileSystemLoader
 
-from config import settings
+from config import AppConfig, settings
 from core.repository.character_repository import CharacterRepository
 from core.repository.user_repository import UserRepository
 from core.services.auth_service import AuthService
@@ -19,7 +19,7 @@ from utils.rabbitmq.producer import RabbitMQProducer
 
 
 class Container(containers.DeclarativeContainer):
-    # config = providers.Configuration(pydantic_settings=[Configs()])
+    config = providers.Configuration(pydantic_settings=[AppConfig()])
 
     wiring_config = containers.WiringConfiguration(
         modules=[
@@ -30,8 +30,8 @@ class Container(containers.DeclarativeContainer):
         ]
     )
 
-    db = providers.Singleton(Database, db_url=settings.database_url)
-    rabbitmq = providers.Singleton(RabbitMQManager, url=settings.rabbit_url)
+    db = providers.Singleton(Database, db_url=config.database_url)
+    rabbitmq = providers.Singleton(RabbitMQManager, url=config.rabbit_url)
     rabbitmq_producer = providers.Factory(RabbitMQProducer, rabbitmq_manager=rabbitmq)
 
     user_repository = providers.Factory(UserRepository, session_factory=db.provided.session)
@@ -45,21 +45,21 @@ class Container(containers.DeclarativeContainer):
     # SMTP service configured
     smtp_service = providers.Factory(
         SMTPService,
-        smtp_server=settings.smtp_server,
-        smtp_port=settings.smtp_port,
-        smtp_username=settings.smtp_username,
-        smtp_password=settings.smtp_password,
+        smtp_server=config.smtp_server,
+        smtp_port=config.smtp_port,
+        smtp_username=config.smtp_username,
+        smtp_password=config.smtp_password,
     )
     # Sendgrid service configured
     sendgrid_service = providers.Singleton(
         SendGridEmailService,
-        api_key=settings.sendgrid_api_key,
-        sender=settings.sendgrid_default_sender
+        api_key=config.sendgrid_api_key,
+        sender=config.sendgrid_default_sender
     )
     # Jinja2 environment configuration
     jinja2_service = providers.Singleton(
         Environment,
-        loader=FileSystemLoader(settings.template_dir)
+        loader=providers.Factory(FileSystemLoader, config.template_dir)
     )
     # Email notification service that uses the SMTP service
     email_service = providers.Factory(
@@ -71,4 +71,3 @@ class Container(containers.DeclarativeContainer):
     rabbitmq_consumer = providers.Factory(
         RabbitMQConsumer, manager=rabbitmq, callback=messages
     )
-

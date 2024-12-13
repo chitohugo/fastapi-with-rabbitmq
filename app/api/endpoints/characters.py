@@ -3,7 +3,7 @@ from typing import List
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends, BackgroundTasks
 
-from container import Container
+from containers import Container
 from core.dependencies import get_current_user
 from core.models.user import User
 from core.schema.base_schema import Blank

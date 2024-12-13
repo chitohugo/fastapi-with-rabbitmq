@@ -2,7 +2,7 @@ from core.schema.user_schema import User
 from core.services.auth_service import AuthService
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
-from container import Container
+from containers import Container
 from core.schema.auth_schema import SignIn, SignInResponse, SignUp
 
 router = APIRouter(
